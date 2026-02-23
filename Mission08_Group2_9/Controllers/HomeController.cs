@@ -6,6 +6,12 @@ namespace Mission08_Group2_9.Controllers;
 
 public class HomeController : Controller
 {
+    private ITaskRepository _repo;
+
+    public HomeController(ITaskRepository temp)
+    {
+        _repo = temp;
+    }
     public IActionResult Index()
     {
         return View();
