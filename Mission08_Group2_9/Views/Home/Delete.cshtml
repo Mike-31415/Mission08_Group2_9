@@ -1,0 +1,83 @@
+@model Mission08_Group2_9.Models.TaskItem
+
+@{
+    ViewData["Title"] = "Delete Task";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0">Delete Task</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <strong>Warning!</strong> Are you sure you want to delete this task? This action cannot be undone.
+                    </div>
+
+                    <h4 class="mb-3">Task Details:</h4>
+
+                    <dl class="row">
+                        <dt class="col-sm-3">Task:</dt>
+                        <dd class="col-sm-9">@Model.Task</dd>
+
+                        @if (Model.DueDate != null)
+                        {
+                            <dt class="col-sm-3">Due Date:</dt>
+                            <dd class="col-sm-9">@Model.DueDate.Value.ToString("MMMM dd, yyyy")</dd>
+                        }
+
+                        <dt class="col-sm-3">Quadrant:</dt>
+                        <dd class="col-sm-9">
+                            @switch (Model.Quadrant)
+                            {
+                                case 1:
+                                    <span class="badge bg-danger">Quadrant 1: Important & Urgent</span>
+                                    break;
+                                case 2:
+                                    <span class="badge bg-primary">Quadrant 2: Important & Not Urgent</span>
+                                    break;
+                                case 3:
+                                    <span class="badge bg-warning">Quadrant 3: Not Important & Urgent</span>
+                                    break;
+                                case 4:
+                                    <span class="badge bg-secondary">Quadrant 4: Not Important & Not Urgent</span>
+                                    break;
+                            }
+                        </dd>
+
+                        @if (Model.Category != null)
+                        {
+                            <dt class="col-sm-3">Category:</dt>
+                            <dd class="col-sm-9">
+                                <span class="badge bg-info text-dark">@Model.Category.CategoryName</span>
+                            </dd>
+                        }
+
+                        <dt class="col-sm-3">Completed:</dt>
+                        <dd class="col-sm-9">
+                            @if (Model.Completed == true)
+                            {
+                                <span class="badge bg-success">Yes</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">No</span>
+                            }
+                        </dd>
+                    </dl>
+
+                    <form asp-action="DeleteConfirmed" method="post" class="mt-4">
+                        <input type="hidden" name="id" value="@Model.TaskId" />
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Quadrants" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-danger">Delete Task</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
