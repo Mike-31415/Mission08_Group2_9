@@ -41,13 +41,26 @@ public class HomeController : Controller
 
     // POST: Edit task
     [HttpPost]
-    public IActionResult Edit(TaskItem task)
+    public IActionResult Edit(int TaskId, string Task, DateTime? DueDate, int Quadrant, int? CategoryId, bool? Completed)
     {
+        var task = new TaskItem
+        {
+            TaskId = TaskId,
+            Task = Task,
+            DueDate = DueDate,
+            Quadrant = Quadrant,
+            CategoryId = CategoryId,
+            Completed = Completed
+        };
+
         if (ModelState.IsValid)
         {
             _repo.UpdateTask(task);
             return RedirectToAction("Quadrants");
         }
+
+        // Repopulate ViewBag.Categories for the dropdown if validation fails
+        ViewBag.Categories = _repo.Categories;
         return View(task);
     }
 

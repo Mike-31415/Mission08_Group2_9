@@ -43,17 +43,21 @@
                             <label asp-for="CategoryId" class="form-label">Category</label>
                             <select asp-for="CategoryId" class="form-select">
                                 <option value="">-- Select Category --</option>
-                                @foreach (var category in ViewBag.Categories)
+                                @if (ViewBag.Categories != null)
                                 {
-                                    <option value="@category.CategoryId">@category.CategoryName</option>
+                                    @foreach (var category in ViewBag.Categories)
+                                    {
+                                        <option value="@category.CategoryId">@category.CategoryName</option>
+                                    }
                                 }
                             </select>
                             <span asp-validation-for="CategoryId" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3 form-check">
-                            <input asp-for="Completed" class="form-check-input" type="checkbox" />
-                            <label asp-for="Completed" class="form-check-label">Mark as Completed</label>
+                            <input type="hidden" name="Completed" value="false" />
+                            <input class="form-check-input" type="checkbox" id="Completed" name="Completed" value="true" @(Model.Completed == true ? "checked" : "") />
+                            <label for="Completed" class="form-check-label">Mark as Completed</label>
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
