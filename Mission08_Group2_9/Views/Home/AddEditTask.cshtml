@@ -1,0 +1,62 @@
+@model Mission08_Group2_9.Models.TaskItem
+
+@{
+    ViewData["Title"] = Model.TaskId == 0 ? "Add Task" : "Edit Task";
+}
+
+<h2 class="mb-4">@ViewData["Title"]</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <form asp-action="AddEditTask" method="post">
+            <input type="hidden" asp-for="TaskId" />
+
+            <div class="mb-3">
+                <label asp-for="Task" class="form-label">Task</label>
+                <input asp-for="Task" class="form-control" placeholder="Enter task name" />
+                <span asp-validation-for="Task" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="DueDate" class="form-label">Due Date</label>
+                <input asp-for="DueDate" type="date" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Quadrant" class="form-label">Quadrant</label>
+                <select asp-for="Quadrant" class="form-select">
+                    <option value="">-- Select Quadrant --</option>
+                    <option value="1">Q1 – Important / Urgent</option>
+                    <option value="2">Q2 – Important / Not Urgent</option>
+                    <option value="3">Q3 – Not Important / Urgent</option>
+                    <option value="4">Q4 – Not Important / Not Urgent</option>
+                </select>
+                <span asp-validation-for="Quadrant" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="CategoryId" class="form-label">Category</label>
+                <select asp-for="CategoryId" class="form-select"
+                        asp-items="@(ViewBag.Categories as SelectList)">
+                    <option value="">-- Select Category --</option>
+                </select>
+            </div>
+
+            <div class="mb-3 form-check">
+                <input type="checkbox" name="Completed" value="true"
+                       class="form-check-input"
+                       @(Model.Completed == true ? "checked" : "") />
+                <label class="form-check-label">Completed</label>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Save Task</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}
