@@ -7,4 +7,5 @@ public interface ITaskRepository
     void AddTask(TaskItem task);
     void UpdateTask(TaskItem task);
     void DeleteTask(int taskId);
+    TaskItem GetTaskById(int taskId);
 }

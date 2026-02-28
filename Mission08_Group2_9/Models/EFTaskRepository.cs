@@ -1,3 +1,4 @@
+using SQLitePCL;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mission08_Group2_9.Models;
@@ -10,22 +11,23 @@ public class EFTaskRepository : ITaskRepository
     {
         _context = temp;
     }
-    
+
     public List<TaskItem> Tasks => _context.Tasks.Include(t => t.Category).ToList();
+
     public List<Category> Categories => _context.Categories.ToList();
-    
+
     public void AddTask(TaskItem task)
     {
         _context.Tasks.Add(task);
         _context.SaveChanges();
     }
-    
+
     public void UpdateTask(TaskItem task)
     {
         _context.Tasks.Update(task);
         _context.SaveChanges();
     }
-    
+
     public void DeleteTask(int taskId)
     {
         var task = _context.Tasks.Find(taskId);
@@ -34,5 +36,10 @@ public class EFTaskRepository : ITaskRepository
             _context.Tasks.Remove(task);
             _context.SaveChanges();
         }
+    }
+
+    public TaskItem GetTaskById(int taskId)
+    {
+        return _context.Tasks.Include(t => t.Category).FirstOrDefault(t => t.TaskId == taskId);
     }
 }
