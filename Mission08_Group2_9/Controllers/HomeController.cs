@@ -7,11 +7,13 @@ namespace Mission08_Group2_9.Controllers;
 
 public class HomeController : Controller
 {
-    private ITaskRepository _repo;
+    private readonly ITaskRepository _repo;
+    private readonly TaskDbContext _context;
 
-    public HomeController(ITaskRepository temp)
+    public HomeController(ITaskRepository temp, TaskDbContext context)
     {
         _repo = temp;
+        _context = context;
     }
 
     public IActionResult Index()
