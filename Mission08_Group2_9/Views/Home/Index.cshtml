@@ -1,8 +1,65 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model List<Mission08_Group2_9.Models.TaskItem>
+
+@{
+    ViewData["Title"] = "Task Quadrants";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<h2 class="mb-4 text-center">Task Quadrants</h2>
+
+<div class="row">
+    @foreach (var quadrant in new[] {
+        new { Number = 1, Title = "Q1 – Important / Urgent", Color = "danger" },
+        new { Number = 2, Title = "Q2 – Important / Not Urgent", Color = "success" },
+        new { Number = 3, Title = "Q3 – Not Important / Urgent", Color = "warning" },
+        new { Number = 4, Title = "Q4 – Not Important / Not Urgent", Color = "secondary" }
+    })
+    {
+        var tasks = Model.Where(t => t.Quadrant == quadrant.Number).ToList();
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 border-@quadrant.Color">
+                <div class="card-header bg-@quadrant.Color text-white fw-bold">
+                    @quadrant.Title
+                </div>
+                <div class="card-body">
+                    @if (!tasks.Any())
+                    {
+                        <p class="text-muted fst-italic">No tasks here.</p>
+                    }
+                    else
+                    {
+                        @foreach (var task in tasks)
+                        {
+                            <div class="border rounded p-2 mb-2">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <strong>@task.Task</strong>
+                                        @if (task.DueDate.HasValue)
+                                        {
+                                            <small class="text-muted d-block">Due: @task.DueDate.Value.ToString("MM/dd/yyyy")</small>
+                                        }
+                                        @if (task.Category != null)
+                                        {
+                                            <small class="text-muted d-block">Category: @task.Category.CategoryName</small>
+                                        }
+                                    </div>
+                                    <div class="d-flex gap-1 ms-2">
+                                        <a asp-action="AddEditTask" asp-route-id="@task.TaskId"
+                                           class="btn btn-sm btn-outline-primary">Edit</a>
+                                        <form asp-action="MarkComplete" method="post" class="d-inline">
+                                            <input type="hidden" name="taskId" value="@task.TaskId" />
+                                            <button type="submit" class="btn btn-sm btn-outline-success">Done</button>
+                                        </form>
+                                        <form asp-action="DeleteTask" method="post" class="d-inline">
+                                            <input type="hidden" name="taskId" value="@task.TaskId" />
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    }
 </div>

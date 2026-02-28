@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Mission08_Group2_9.Models;
 
 namespace Mission08_Group2_9.Controllers;
@@ -17,106 +18,56 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        return View();
-    }
-
-    // Shows all not-completed tasks laid out in quadrants
-    public IActionResult Quadrants()
-    {
-        var tasks = _repo.Tasks
-            .Where(t => t.Completed != true)
-            .OrderBy(t => t.DueDate)
-            .ToList();
-
+        var tasks = _repo.Tasks.Where(t => t.Completed != true).ToList();
         return View(tasks);
     }
 
-    // GET: Add or edit a task
     [HttpGet]
-    public IActionResult TaskForm(int? id)
+    public IActionResult AddEditTask(int? id)
     {
-        ViewBag.Categories = _context.Categories
-            .OrderBy(c => c.CategoryName)
-            .ToList();
-
+        ViewBag.Categories = new SelectList(_repo.Categories, "CategoryId", "CategoryName");
+        
         if (id == null)
-        {
             return View(new TaskItem());
-        }
-
-        var task = _context.Tasks
-            .FirstOrDefault(t => t.TaskId == id);
-
-        if (task == null)
-        {
-            return RedirectToAction("Quadrants");
-        }
-
+        
+        var task = _repo.Tasks.FirstOrDefault(t => t.TaskId == id);
         return View(task);
     }
 
-    // POST: Save a new or edited task
     [HttpPost]
-    public IActionResult TaskForm(TaskItem task)
+    public IActionResult AddEditTask(TaskItem taskItem)
     {
-        if (!ModelState.IsValid)
+        if (ModelState.IsValid)
         {
-            ViewBag.Categories = _context.Categories
-                .OrderBy(c => c.CategoryName)
-                .ToList();
-
-            return View(task);
+            if (taskItem.TaskId == 0)
+                _repo.AddTask(taskItem);
+            else
+                _repo.UpdateTask(taskItem);
+        
+            return RedirectToAction("Index");
         }
-
-        if (task.TaskId == 0)
-        {
-            _context.Tasks.Add(task);
-        }
-        else
-        {
-            _context.Tasks.Update(task);
-        }
-
-        _context.SaveChanges();
-
-        return RedirectToAction("Quadrants");
+    
+        ViewBag.Categories = new SelectList(_repo.Categories, "CategoryId", "CategoryName");
+        return View(taskItem);
     }
 
-    // POST: Mark a task as completed
     [HttpPost]
-    public IActionResult MarkComplete(int id)
+    public IActionResult DeleteTask(int taskId)
     {
-        var task = _context.Tasks
-            .FirstOrDefault(t => t.TaskId == id);
+        _repo.DeleteTask(taskId);
+        return RedirectToAction("Index");
+    }
 
+    [HttpPost]
+    public IActionResult MarkComplete(int taskId)
+    {
+        var task = _repo.Tasks.FirstOrDefault(t => t.TaskId == taskId);
         if (task != null)
         {
             task.Completed = true;
-            _context.SaveChanges();
+            _repo.UpdateTask(task);
         }
-
-        return RedirectToAction("Quadrants");
-    }
-
-    // POST: Delete a task
-    [HttpPost]
-    public IActionResult Delete(int id)
-    {
-        var task = _context.Tasks
-            .FirstOrDefault(t => t.TaskId == id);
-
-        if (task != null)
-        {
-            _context.Tasks.Remove(task);
-            _context.SaveChanges();
-        }
-
-        return RedirectToAction("Quadrants");
-    }
-
-    public IActionResult Privacy()
-    {
-        return View();
+        return RedirectToAction("Index");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
